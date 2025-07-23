@@ -1,6 +1,6 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useEffect } from 'react';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -28,21 +28,33 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         remember: false,
     });
 
+    const { props } = usePage();
+
+    useEffect(() => {
+        if (typeof props.token === 'string') {
+            localStorage.setItem('token', props.token);
+        }
+    }, [props.token]);
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
         post(route('login'), {
             onFinish: () => reset('password'),
         });
     };
 
     return (
-        <AuthLayout title="Inicia sesión en tu cuenta" description="Digita tu correo y contraseña en los siguientes campos para continuar.">
-            <Head title="Log in" />
+        <AuthLayout
+            title="Inicia sesión en tu cuenta"
+            description="Digita tu correo y contraseña en los siguientes campos para continuar."
+        >
+            <Head title="Inicio de sesión" />
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Direccion de correo</Label>
+                        <Label htmlFor="email">Dirección de correo</Label>
                         <Input
                             id="email"
                             type="email"
@@ -62,7 +74,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             <Label htmlFor="password">Contraseña</Label>
                             {canResetPassword && (
                                 <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
-                                    Olvidaste tu contraseña?
+                                    ¿Olvidaste tu contraseña?
                                 </TextLink>
                             )}
                         </div>
@@ -87,7 +99,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
                         />
-                        <Label htmlFor="remember">Recuerdame</Label>
+                        <Label htmlFor="remember">Recuérdame</Label>
                     </div>
 
                     <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
@@ -97,9 +109,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 </div>
 
                 <div className="text-center text-sm text-muted-foreground">
-                    Aun no tienes una cuenta?{' '}
+                    ¿Aún no tienes una cuenta?{' '}
                     <TextLink href={route('register')} tabIndex={5}>
-                        Registrate aqui
+                        Regístrate aquí
                     </TextLink>
                 </div>
             </form>

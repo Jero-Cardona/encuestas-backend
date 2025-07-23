@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
+
 
 class AuthController extends Controller
 {
@@ -48,21 +50,17 @@ class AuthController extends Controller
 
         // Validar usuario y contraseña
         if (!$user || !Hash::check($fields['password'], $user->password)) {
-            return response()->json([
-                'message' => 'Credenciales incorrectas'
-            ], 401);
+            return back()->withErrors([
+                'email' => 'Las credenciales son incorrectas.',
+            ]);
         }
+        Auth::login($user);
 
         // Crear token con Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
 
         // Respuesta
-        return response()->json([
-            'message' => 'Inicio de sesión exitoso',
-            'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer'
-        ], 200);
+        return Redirect::route('dashboard')->with(['token' => $token]);
     }
 
     
