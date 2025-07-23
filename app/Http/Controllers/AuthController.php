@@ -35,30 +35,37 @@ class AuthController extends Controller
         ], 201); //codigo de estatus 201 created
     }
     
-    // funcion para iniciar sesion
     public function login(Request $request)
     {
+        // Validar campos
         $fields = $request->validate([
-            'email' => 'required|string|email',
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        // Verificar si el email existe
+        // Buscar usuario
         $user = User::where('email', $fields['email'])->first();
-        
-        // validar si las credenciales son correctas
-        if (!$user || Hash::check($fields['password'], $user->password)){
-            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+
+        // Validar usuario y contraseña
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Credenciales incorrectas'
+            ], 401);
         }
 
-        $token = $user->createToken('apptoken')->plainTextToken;
+        // Crear token con Sanctum
+        $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Respuesta
         return response()->json([
+            'message' => 'Inicio de sesión exitoso',
             'user' => $user,
-            'token' => $token
-        ]);
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
     }
 
+    
     // Funcion para cerrar sesion
     public function logout(Request $request)
     {

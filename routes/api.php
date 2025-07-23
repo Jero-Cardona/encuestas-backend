@@ -16,5 +16,5 @@ Route::middleware('auth:sanctum')->group(function(){
 // routes para la encuesta
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/encuesta', [RespuestasEncuestaController::class, 'store']);
-    Route::get('/encuetsa', [RespuestasEncuestaController::class, 'show']);
-});
+    Route::get('/encuesta', [RespuestasEncuestaController::class, 'show']);
+}); 

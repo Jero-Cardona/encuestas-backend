@@ -16,6 +16,13 @@ class RespuestasEncuestaController extends Controller
             'respuestas' => 'required|array',
         ]);
 
+        $user = RespuestasEncuesta::where('user_id', Auth::id())->exists();
+        echo($user);
+        if ($user){
+            return response()->json([
+                'message' => 'este usuario ya completo la encuesta.',
+            ], 400);
+        }
         $respuestas = RespuestasEncuesta::create([
             'user_id' => Auth::id(),
             'respuestas' => $request->input('respuestas'),
@@ -25,20 +32,16 @@ class RespuestasEncuestaController extends Controller
             'message' => 'Respuestas guardadas correctamente.',
             'data' => $respuestas
         ], 201);
+
     }
 
     // Consultar respuestas de un usuario autenticado
     public function show(Request $request)
     {
         $respuestas = RespuestasEncuesta::where('user_id', Auth::id())->get();
-        if ($respuestas){
-            return response()->json([
-                'data' => $respuestas
-            ], 200);
-        } else {
-            return response()->json([
-                'data' => 'error'
-            ], 400);
-        }
+        return response()->json([
+            'data' => $respuestas
+        ], 200);
+    
     }
 }
