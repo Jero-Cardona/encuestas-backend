@@ -17,7 +17,8 @@ class RespuestasEncuestaController extends Controller
         ]);
 
         $user = RespuestasEncuesta::where('user_id', Auth::id())->exists();
-        echo($user);
+        
+        // validar si el usuario ya ha respondido la encuesta
         if ($user){
             return response()->json([
                 'message' => 'este usuario ya completo la encuesta.',
