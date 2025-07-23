@@ -1,8 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, FormEventHandler } from 'react';
 import { router } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { LoaderCircle } from 'lucide-react';
+
+
+type EncuestasForm = {
+    frameworkFavorito: string,
+    experienciaReact: string,
+    lenguajes: string[],
+    trabajoEnEquipo: number,
+    metodologiasAgiles: string,
+}
+
 
 export default function EncuestaForm() {
-    const [formData, setFormData] = useState({
+    // const [data, setdata] = useState({
+    //     frameworkFavorito: '',
+    //     experienciaReact: '',
+    //     lenguajes: [] as string[],
+    //     trabajoEnEquipo: 3,
+    //     metodologiasAgiles: '',
+    // });
+
+    const { data, setData, post, processing, errors, reset } = useForm<Required<EncuestasForm>>({
         frameworkFavorito: '',
         experienciaReact: '',
         lenguajes: [] as string[],
@@ -12,7 +33,7 @@ export default function EncuestaForm() {
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, checked } = e.target;
-        setFormData((prev) => {
+        setData((prev) => {
             const lenguajes = checked
                 ? [...prev.lenguajes, value]
                 : prev.lenguajes.filter((lang) => lang !== value);
@@ -20,11 +41,13 @@ export default function EncuestaForm() {
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit: FormEventHandler = async (e) => {
         e.preventDefault();
-        router.post('/api/encuesta', {
-            respuestas: formData,
-        });
+        // router.post('api/encuesta', {
+        //     respuestas: data,
+        // });
+        
+        post(route('encuesta'))
     };
 
     return (
@@ -37,8 +60,8 @@ export default function EncuestaForm() {
                 <textarea
                     className="w-full border rounded p-2"
                     rows={4}
-                    value={formData.frameworkFavorito}
-                    onChange={(e) => setFormData({ ...formData, frameworkFavorito: e.target.value })}
+                    value={data.frameworkFavorito}
+                    onChange={(e) => setData({ ...data, frameworkFavorito: e.target.value })}
                     required
                 />
             </div>
@@ -52,8 +75,8 @@ export default function EncuestaForm() {
                             type="radio"
                             name="experienciaReact"
                             value={nivel}
-                            checked={formData.experienciaReact === nivel}
-                            onChange={(e) => setFormData({ ...formData, experienciaReact: e.target.value })}
+                            checked={data.experienciaReact === nivel}
+                            onChange={(e) => setData({ ...data, experienciaReact: e.target.value })}
                             required
                         />
                         <span className="ml-2">{nivel}</span>
@@ -69,7 +92,7 @@ export default function EncuestaForm() {
                         <input
                             type="checkbox"
                             value={lenguaje}
-                            checked={formData.lenguajes.includes(lenguaje)}
+                            checked={data.lenguajes.includes(lenguaje)}
                             onChange={handleCheckboxChange}
                         />
                         <span className="ml-2">{lenguaje}</span>
@@ -86,13 +109,13 @@ export default function EncuestaForm() {
                     type="range"
                     min="1"
                     max="5"
-                    value={formData.trabajoEnEquipo}
+                    value={data.trabajoEnEquipo}
                     onChange={(e) =>
-                        setFormData({ ...formData, trabajoEnEquipo: parseInt(e.target.value) })
+                        setData({ ...data, trabajoEnEquipo: parseInt(e.target.value) })
                     }
                     className="w-full"
                 />
-                <p className="text-sm">Valor: {formData.trabajoEnEquipo}</p>
+                <p className="text-sm">Valor: {data.trabajoEnEquipo}</p>
             </div>
 
             {/* 5. Sí/No */}
@@ -104,8 +127,8 @@ export default function EncuestaForm() {
                             type="radio"
                             name="metodologiasAgiles"
                             value={opcion}
-                            checked={formData.metodologiasAgiles === opcion}
-                            onChange={(e) => setFormData({ ...formData, metodologiasAgiles: e.target.value })}
+                            checked={data.metodologiasAgiles === opcion}
+                            onChange={(e) => setData({ ...data, metodologiasAgiles: e.target.value })}
                             required
                         />
                         <span className="ml-2">{opcion}</span>
@@ -113,12 +136,10 @@ export default function EncuestaForm() {
                 ))}
             </div>
 
-            <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-400 transition"
-            >
-                Enviar respuestas
-            </button>
+                    <Button type="submit" className="mt-4 w-full cursor-pointer" tabIndex={4} disabled={processing}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        enviar
+                    </Button>
         </form>
     );
 }

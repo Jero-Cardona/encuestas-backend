@@ -15,7 +15,7 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Encuesta" />
-            <div className='max-w-[700px] m-auto items-center h-auto'>
+            <div className='max-w-[600px] m-auto items-center h-auto'>
                 <EncuestaForm />
             </div>
         </AppLayout>

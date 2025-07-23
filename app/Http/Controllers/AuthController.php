@@ -54,13 +54,17 @@ class AuthController extends Controller
                 'email' => 'Las credenciales son incorrectas.',
             ]);
         }
-        Auth::login($user);
+        // Auth::login($user);
 
         // Crear token con Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
 
         // Respuesta
-        return Redirect::route('dashboard')->with(['token' => $token]);
+        // return Redirect::route('dashboard')->with(['token' => $token]);
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ]);
     }
 
     

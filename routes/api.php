@@ -22,8 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 // ruta dashboard
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-});
+// Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+//     Route::get('/dashboard', function () {
+//         return Inertia::render('Dashboard');
+//     })->name('dashboard');
+// });
