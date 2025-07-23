@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\RespuestasEncuesta;
+use Illuminate\Support\Facades\Auth;
+
+
+class RespuestasEncuestaController extends Controller
+{
+    //Guardar las respuestas en la BD
+    public function store(Request $request)
+    {
+        $request->validate([
+            'respuestas' => 'required|array',
+        ]);
+
+        $respuestas = RespuestasEncuesta::create([
+            'user_id' => Auth::id(),
+            'respuestas' => $request->input('respuestas'),
+        ]);
+
+        return response()->json([
+            'message' => 'Respuestas guardadas correctamente.',
+            'data' => $respuestas
+        ], 201);
+    }
+
+    // Consultar respuestas de un usuario autenticado
+    public function show(Request $request)
+    {
+        $respuestas = RespuestasEncuesta::where('user_id', Auth::id())->get();
+        if ($respuestas){
+            return response()->json([
+                'data' => $respuestas
+            ], 200);
+        } else {
+            return response()->json([
+                'data' => 'error'
+            ], 400);
+        }
+    }
+}
